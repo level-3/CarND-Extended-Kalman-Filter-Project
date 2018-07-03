@@ -94,6 +94,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	float rho =  measurement_pack.raw_measurements_(0);
 	float phi =  measurement_pack.raw_measurements_(1);
 	float rho_dot =  measurement_pack.raw_measurements_(2);
+	    
+	 // normalize yaw  -pi < yaw < pi
+	 if (phi >  F_PI) phi -= 2.f*F_PI;
+	 if (phi < -F_PI) phi += 2.f*F_PI;
+	    
 	ekf_.x_(0) = rho * cos(phi);
 	ekf_.x_(1) = rho * sin(phi);
 	ekf_.x_(2) = rho_dot * cos(phi);
@@ -104,8 +109,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Initialize state.
       */
-      ekf_.x_(0) = measurement_pack.raw_measurements_(0);
-      ekf_.x_(1) = measurement_pack.raw_measurements_(1);
+     	ekf_.x_(0) = measurement_pack.raw_measurements_(0);
+      	ekf_.x_(1) = measurement_pack.raw_measurements_(1);
 	  
     }
 
@@ -163,12 +168,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
-    ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
+    	ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
   	ekf_.R_ = R_radar_;
   	ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   } else {
     // Laser updates
-    ekf_.H_ = H_laser_;
+    	ekf_.H_ = H_laser_;
   	ekf_.R_ = R_laser_;
   	ekf_.Update(measurement_pack.raw_measurements_);
   }

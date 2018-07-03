@@ -95,9 +95,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	float phi =  measurement_pack.raw_measurements_(1);
 	float rho_dot =  measurement_pack.raw_measurements_(2);
 	    
-	 // normalize yaw  -pi < yaw < pi
-	 if (phi >  F_PI) phi -= 2.f*F_PI;
-	 if (phi < -F_PI) phi += 2.f*F_PI;
+	// normalize phi  -pi < phi < pi
+	if (phi >  F_PI) phi -= 2.f*F_PI;
+	if (phi < -F_PI) phi += 2.f*F_PI;
 	    
 	ekf_.x_(0) = rho * cos(phi);
 	ekf_.x_(1) = rho * sin(phi);

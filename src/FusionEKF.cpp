@@ -45,8 +45,8 @@ FusionEKF::FusionEKF() {
 			  0, 0, 0, 1000;
 			  
 	//measurement matrix
-	ekf_.H_ = MatrixXd(2, 4);
-	ekf_.H_ << 1, 0, 0, 0,
+	//ekf_.H_ = MatrixXd(2, 4);
+	H_laser_ << 1, 0, 0, 0,
 			  0, 1, 0, 0;		  
 			  
 	//the initial transition matrix F_
@@ -95,11 +95,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	float phi =  measurement_pack.raw_measurements_(1);
 	float rho_dot =  measurement_pack.raw_measurements_(2);
 	    
-	float F_PI = 22/7;
-	// normalize phi  -pi < phi < pi
-	if (phi >  F_PI) phi -= 2.f*F_PI;
-	if (phi < -F_PI) phi += 2.f*F_PI;
-	    
+
 	ekf_.x_(0) = rho * cos(phi);
 	ekf_.x_(1) = rho * sin(phi);
 	ekf_.x_(2) = rho_dot * cos(phi);
@@ -170,13 +166,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
     	ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
-  	ekf_.R_ = R_radar_;
-  	ekf_.UpdateEKF(measurement_pack.raw_measurements_);
+    	ekf_.R_ = R_radar_;
+    	ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   } else {
     // Laser updates
     	ekf_.H_ = H_laser_;
-  	ekf_.R_ = R_laser_;
-  	ekf_.Update(measurement_pack.raw_measurements_);
+    	ekf_.R_ = R_laser_;
+    	ekf_.Update(measurement_pack.raw_measurements_);
   }
 
   // print the output

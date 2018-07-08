@@ -32,8 +32,11 @@ void KalmanFilter::Predict() {
   
 }
 
+
 void KalmanFilter::Update(const VectorXd &z) {
   /**
+   *
+   *
   TODO:
     * update the state by using Kalman Filter equations
   */
@@ -71,6 +74,13 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
+
+  float F_PI = 22/7;
+
+  double width = 2 * F_PI;
+  double offset = y[1] + F_PI;
+  y[1] = (offset - (floor(offset/width)*width))- F_PI;
+
 	
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
